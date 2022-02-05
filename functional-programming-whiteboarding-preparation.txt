@@ -1,0 +1,256 @@
+***********************************************************
+Question #1: Turning Strings to URLs
+***********************************************************
+
+URLs cannot have spaces. Instead, all spaces in a string are replaced with %20. 
+Write an algorithm that replaces all spaces in a string with %20.
+
+You may not use the replace() method or regular expressions to solve this problem. 
+Solve the problem with and without recursion.
+
+Example
+Input: "Jasmine Ann Jones"
+Output: "Jasmine%20Ann%20Jones"
+
+Questions: Will I need to sanitize the input or can I take it as is?
+  May I use replace method or regular expressions?
+  Should I use recursion?
+
+Edge cases:
+  What if there's a space at the beginning or end? We wouldn't want %20's, so we could use trim() first.
+  What if there are two spaces in the middle?
+
+
+Solution with recursion:
+const stringToUrl = (text, i = 0) => { // input = ("what is recursion?", 0)
+  if (i >= text.length) {
+    return text;
+  } else if (text[i] === " ") {
+    const beginning = text.slice(0, i);
+    const end = text.slice(i + 1);
+    const newText = beginning + "%20" + end;
+    return stringToUrl(newText, i + 1); // ("what%20is recursion?", 1)
+  } else {
+    return stringToUrl(text, i + 1);
+  }
+}
+
+Solution with loop:
+const stringToUrl = (text) => {
+  let url = text;
+  for(let i = 0; i < url.length; i++) {
+    if (url[i] === " ") {
+      const beginning = url.slice(0, i);
+      const end = url.slice(i + 1);
+      url = beginning + "%20" + end;
+    }
+  }
+  return url;
+}
+
+
+
+***********************************************************
+Question #2: Array Deduping
+***********************************************************
+
+Write an algorithm that removes duplicates from an array. Do not use a function like filter() to solve this. 
+Once you have solved the problem, demonstrate how it can be solved with filter(). 
+Solve the problem with and without recursion.
+
+Example
+Input: [7, 9, "hi", 12, "hi", 7, 53]
+Output: [7, 9, "hi", 12, 53]
+
+Questions:
+  May I use filter to solve this?
+  Would you prefer recursion or a loop?
+  Does it matter if I delete the first or second of the duplicate pair?
+
+Edge cases:
+
+
+Recursive solution:
+const noDupes = (inputArray, i = 0, j = 0) => {   // Input: ([7, 9, "hi", 12, "hi", 7, 53])
+  if (i >= inputArray.length) {
+    return inputArray;
+  } else if (i != j && inputArray[i] === inputArray[j]) {
+    const beginning = inputArray.slice(0, i);
+    const end = inputArray.slice(i + 1);
+    const newInput = beginning.concat(end);
+    return noDupes(newInput, i, j + 1);
+  } else if (j <= inputArray.length) {
+    return noDupes(inputArray, i, j + 1);
+  } else {
+    return noDupes(inputArray, i + 1, 0);
+  }
+}
+
+Loop solution:
+const noDupes = (inputArray) => {   // Input: ([7, 9, "hi", 12, "hi", 7, 53])
+  let newInput = inputArray;
+  for (let i = 0; i < newInput.lenth; i++) {
+    for (let j = 0; j < newInput.lenght; j++) {
+      if (i != j && newInput[i] === newInput[j]) {
+        const beginning = newInput.slice(0, i);
+        const end = newInput.slice(i + 1);
+        newInput = beginning.concat(end);
+      }
+    }
+  }
+  return newInput;
+}
+
+
+
+***********************************************************
+Question #3: Compressing Strings
+***********************************************************
+
+Write an algorithm that takes a string with repeated characters and compresses them, 
+using a number to show how many times the repeated character has been compressed. 
+For instance, aaa would be written as 3a. Solve the problem with and without recursion.
+
+Example
+Input: "aaabccdddda"
+Output: "3ab2c4da"
+
+Questions:
+  Would you prefer recursion or a loop?
+  Are the characters case sensitive?
+  Can I expect the original string to contain only letters?
+
+Edge cases:
+
+
+Recursive solution:
+const compress = (inputString, i = 1) => {
+  if (i >= inputString.length) { // termination 
+    return inputString;
+  } else if (inputString[i-1] === inputString[i] && !(parseInt(inputString[i-2]))) {
+    const beginning = inputString.slice(0, i-1);
+    const count = 2;
+    const end = inputString.slice(i); // this removes the value at i
+    const newString = beginning + count + end;
+    return compress(newString, i + 1) // taking one value out of the string (i), but also adding one (2), so 'i' needs to iterate
+  } else if (inputString[i-1] === inputString[i] && (parseInt(inputString[i-2]))) {
+    const beginning = inputString.slice(0, i-2);
+    const count = parseInt(inputString[i-2]) + 1;
+    const end = inputString.slice(i); // this removes the value at i
+    const newString = beginning + count + end;
+    return compress(newString, i) // taking two values out of the string (i) and adding one (2), so 'i' needs not iterate
+  } else {
+    return compress(inputString, i + 1)
+  }
+}
+
+Loop solution:
+const compress = (inputString) => {
+  let compressedString = inputString
+  let count = 2;
+  for (let i = 0; i < compressedString.length; i = i) {
+    if ((compressedString[i] === compressedString[i+1]) && (parseInt(compressedString[i-1]) === NaN)) {
+      count = 2;
+      compressedString = compressedString.slice(0, i) + count + compressedString.slice(i + 1);
+      i++;
+    } else if (compressedString[i] === compressedString[i+1]) {
+      count++;
+      compressedString = compressedString.slice(0, i - 1) + count + compressedString.slice(i + 1);
+      i++;
+    } else {
+      i++;
+    }
+  }
+  return compressedString;
+}
+
+
+
+***********************************************************
+Question #4: Checking for Uniqueness
+***********************************************************
+
+Write an algorithm that determines whether all the elements in a string are unique. 
+You may not convert the string into an array or use array methods to solve this problem. 
+The algorithm should return a boolean.
+
+Example
+Input: "hello"
+Output: false
+Input: "copyright"
+Output: true
+
+Questions:
+  Would you prefer recursion or a loop?
+  Are the characters case sensitive?
+  Can I expect the original string to contain any special characters?
+
+Edge cases:
+
+Recursive solution:
+
+const isUnique = (inputString, i = 0, j = 0) => {   // Input: ("hello")
+  if (i >= inputString.length) {
+    return true;
+  } else if (i != j && inputString[i] === inputString[j]) {
+    return false;
+  } else if (j <= inputString.length) {
+    return isUnique(inputString, i, j + 1);
+  } else {
+    return isUnique(inputString, i + 1, 0);
+  }
+}
+
+
+
+***********************************************************
+Question #5: Array Sorting
+***********************************************************
+
+Write an algorithm that sorts an array without using the sort() method. 
+There are many different sorting algorithms - take the time to read about the following:
+
+Quick sort
+Merge sort
+Heap sort
+Insertion sort
+Bubble sort
+Selection sort
+You may implement any of the above algorithms (or your own) to solve the problem 
+  - as long as it doesn't use sort().
+
+Example
+Input: [9, 2, 7, 12]
+Output: [2, 7, 9, 12]
+
+Questions:
+  Would you prefer recursion or a loop?
+  Can I expect the original array to contain only integers?
+  Can I expect the original input to be an array?
+  Would you prefer sorting ascending or descending?
+  May I use sort()?
+  Will there be duplicates?
+
+Edge cases:
+  Original array includes decimals, numbers and letters.
+  Original input is not an array
+
+Recursive solution using selection sort:
+const notSort = (inputArray, i = 0, j = 0) => { // ([9, 2, 7, 12])
+  if (i >= inputArray.length) { 
+    return inputArray;
+  } else if (j <= i) { 
+    return notSort(inputArray, i, j + 1);
+  } else if (inputArray[i] >= inputArray[j]) {
+    const beginning = inputArray.slice(0, i);
+    const middle = inputArray.slice(i, j);
+    const moveJ = [inputArray[j]];
+    const end = inputArray.slice(j + 1);
+    const newArray = beginning.concat(moveJ).concat(middle).concat(end);
+    return notSort(newArray, i, j);
+  } else if (inputArray[i] <= inputArray[j]) {
+    return notSort(inputArray, i, j + 1);
+  } else {
+    return notSort(inputArray, i + 1, 0)
+  }
+}
